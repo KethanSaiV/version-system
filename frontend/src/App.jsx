@@ -1,20 +1,22 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import History from "./pages/History";
+import "./index.css";
 
-function App() {
+export default function App() {
+  const isAuth = !!localStorage.getItem("token");
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/history/:id" element={<History />} />
+        <Route
+          path="/dashboard"
+          element={isAuth ? <Dashboard /> : <Navigate to="/" />}
+        />
       </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;

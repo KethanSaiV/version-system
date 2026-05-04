@@ -1,64 +1,116 @@
 const express = require("express");
 const router = express.Router();
 const Record = require("../models/Record");
-const auth = require("../middleware/auth");
-const role = require("../middleware/role");
+const Version = require("../models/Version");
+
 
 // CREATE
-router.post("/", auth, role("EDITOR"), async (req, res) => {
-  console.log("BODY:", req.body);   // 👈 ADD THIS
+router.post("/create", async (req, res) => {
+  try {
+    const { title, content } = req.body;
 
-  const recordId = Date.now().toString();
+    const record = await Record.create({
+      title,
+      createdBy: "user"
+    });
 
-  const record = await Record.create({
-    recordId,
-    title: req.body.title,
-    content: req.body.content,
-    version: 1,
-    isLatest: true
-  });
+    await Version.create({
+      recordId: record._id,
+      versionNumber: 1,
+      content
+    });
 
-  console.log("SAVED:", record);   // 👈 ADD THIS
+    res.json({ message: "Created" });
 
-  res.send(record);
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
 });
 
-// UPDATE
-router.put("/:id", auth, role("EDITOR"), async (req, res) => {
-  const old = await Record.findOne({
-    recordId: req.params.id,
-    isLatest: true
-  });
 
-  if (!old) return res.status(404).send("Record not found");
+// UPDATE (NEW VERSION)
+router.put("/update/:id", async (req, res) => {
+  try {
+    const { content } = req.body;
+    const recordId = req.params.id;
 
-  old.isLatest = false;
-  await old.save();
+    const latest = await Version.findOne({ recordId })
+      .sort({ versionNumber: -1 });
 
-  const newRecord = await Record.create({
-    recordId: req.params.id,
-    title: req.body.title,
-    content: req.body.content,
-    version: old.version + 1,
-    isLatest: true
-  });
+    const newVersion = latest ? latest.versionNumber + 1 : 1;
 
-  res.send(newRecord);
+    await Version.create({
+      recordId,
+      versionNumber: newVersion,
+      content
+    });
+
+    res.json({ message: "Updated" });
+
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
 });
 
-// GET LATEST
-router.get("/", auth, async (req, res) => {
-  const records = await Record.find({ isLatest: true });
-  res.send(records);
+
+// GET (ONLY LATEST VERSION)
+router.get("/", async (req, res) => {
+  try {
+
+    const records = await Record.find();
+
+    const result = [];
+
+    for (let r of records) {
+
+      const latest = await Version.findOne({ recordId: r._id })
+        .sort({ versionNumber: -1 });
+
+      result.push({
+        _id: r._id,
+        title: r.title,
+        version: latest?.versionNumber || 1,
+        content: latest?.content || ""
+      });
+    }
+
+    res.json(result);
+
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
 });
+
 
 // HISTORY
-router.get("/:id/history", auth, async (req, res) => {
-  const history = await Record.find({
-    recordId: req.params.id
-  }).sort({ version: 1 });
+router.get("/history/:id", async (req, res) => {
+  try {
 
-  res.send(history);
+    const versions = await Version.find({ recordId: req.params.id })
+      .sort({ versionNumber: 1 });
+
+    res.json(versions);
+
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
+});
+
+
+// DELETE
+router.delete("/delete/:id", async (req, res) => {
+  try {
+
+    const id = req.params.id;
+
+    await Record.findByIdAndDelete(id);
+    await Version.deleteMany({ recordId: id });
+
+    res.json({ message: "Deleted" });
+
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
 });
 
 module.exports = router;

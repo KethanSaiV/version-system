@@ -1,11 +1,8 @@
 const mongoose = require("mongoose");
 
 const recordSchema = new mongoose.Schema({
-  recordId: String,
   title: String,
-  content: String,
-  version: Number,
-  isLatest: Boolean,
+  createdBy: String,
   createdAt: { type: Date, default: Date.now }
 });
 

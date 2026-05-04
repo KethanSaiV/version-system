@@ -1,0 +1,150 @@
+:root{
+  --bg:#0f172a;
+  --card:#111827;
+  --muted:#9ca3af;
+  --text:#e5e7eb;
+  --primary:#6366f1;
+  --primary-2:#8b5cf6;
+  --danger:#ef4444;
+  --border:#1f2937;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,Arial;
+  background:linear-gradient(135deg,#0f172a,#020617);
+  color:var(--text);
+}
+
+.auth-wrap{
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.auth-card{
+  width:340px;
+  padding:28px;
+  background:var(--card);
+  border-radius:16px;
+  border:1px solid var(--border);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.logo{
+  width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  border-radius:10px;
+  font-weight:bold;
+}
+
+.logo.sm{width:28px;height:28px;font-size:12px}
+
+.input{
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  background:#020617;
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--text);
+}
+
+.btn{
+  margin-top:12px;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#1f2937;
+  color:white;
+}
+
+.btn.primary{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+}
+
+.btn.danger{
+  background:var(--danger);
+}
+
+.btn.ghost{
+  background:transparent;
+  border:1px solid var(--border);
+}
+
+.muted{
+  margin-top:12px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.app{min-height:100vh}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  padding:14px 20px;
+  border-bottom:1px solid var(--border);
+}
+
+.container{
+  padding:20px;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+}
+
+.grid{
+  margin-top:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:16px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+}
+
+.record-head{
+  display:flex;
+  justify-content:space-between;
+}
+
+.badge{
+  background:var(--primary);
+  padding:4px 8px;
+  border-radius:6px;
+  font-size:12px;
+}
+
+.actions{
+  display:flex;
+  gap:6px;
+  margin-top:10px;
+}
+
+.history{
+  margin-top:10px;
+  border-top:1px solid var(--border);
+  padding-top:10px;
+}
+
+.history-item{
+  font-size:13px;
+  margin-bottom:6px;
+}

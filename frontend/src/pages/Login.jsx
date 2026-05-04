@@ -1,24 +1,62 @@
 import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const nav = useNavigate();
 
   const login = async () => {
-    const res = await axios.post("/auth/login", { email, password });
-    localStorage.setItem("token", res.data.token);
-    nav("/dashboard");
+    try {
+      setLoading(true);
+      const res = await axios.post("http://localhost:5000/auth/login", {
+        email,
+        password,
+      });
+      localStorage.setItem("token", res.data.token);
+      nav("/dashboard");
+    } catch (err) {
+      alert(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
-      <h2>Login</h2>
-      <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-      <input placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={login}>Login</button>
-    </>
+    <div className="auth-wrap">
+      <div className="auth-card">
+        <div className="brand">
+          <div className="logo">V</div>
+          <h2>Version Manager</h2>
+        </div>
+
+        <h3>Welcome back</h3>
+
+        <input
+          className="input"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          className="input"
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button className="btn primary" onClick={login} disabled={loading}>
+          {loading ? "Signing in..." : "Login"}
+        </button>
+
+        <p className="muted">
+          New here? <Link to="/register">Create an account</Link>
+        </p>
+      </div>
+    </div>
   );
 }

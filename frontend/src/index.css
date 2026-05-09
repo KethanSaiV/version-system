@@ -305,14 +305,17 @@ body::before {
 }
 
 /* ── Search/action row ── */
-.row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+.row{
+  display:flex;
+  gap:16px;
+  width:100%;
+  align-items:center;
 }
 
 .row .input {
   flex: 1;
+  min-width: 240px;
+  width: 100%;
   margin-top: 0;
 }
 

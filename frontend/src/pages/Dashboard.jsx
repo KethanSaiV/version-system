@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [history, setHistory] = useState({});
 
   const nav = useNavigate();
+  const role = localStorage.getItem("role");
 
   // FETCH RECORDS
   const fetchRecords = async () => {
@@ -147,6 +148,8 @@ export default function Dashboard() {
       <div className="container">
 
         {/* CREATE */}
+        {role === "EDITOR" && (
+
         <div className="card form">
 
           <h3>Create / Update Record</h3>
@@ -175,7 +178,10 @@ export default function Dashboard() {
             </button>
 
           </div>
+
         </div>
+
+        )}
 
         {/* RECORDS */}
         <div className="grid">
@@ -199,30 +205,34 @@ export default function Dashboard() {
               </p>
 
               {/* ACTIONS */}
-              <div className="actions">
+            <div className="actions">
 
-                <button
-                  className="btn"
-                  onClick={() => updateRecord(r._id)}
-                >
-                  Update
-                </button>
+              {role === "EDITOR" && (
+                <>
+                  <button
+                    className="btn"
+                    onClick={() => updateRecord(r._id)}
+                  >
+                    Update
+                  </button>
 
-                <button
-                  className="btn"
-                  onClick={() => viewHistory(r._id)}
-                >
-                  History
-                </button>
+                  <button
+                    className="btn danger"
+                    onClick={() => deleteRecord(r._id)}
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
 
-                <button
-                  className="btn danger"
-                  onClick={() => deleteRecord(r._id)}
-                >
-                  Delete
-                </button>
+              <button
+                className="btn"
+                onClick={() => viewHistory(r._id)}
+              >
+                History
+              </button>
 
-              </div>
+            </div>
 
               {/* HISTORY */}
               {history[r._id] && (

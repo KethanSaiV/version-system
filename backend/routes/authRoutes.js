@@ -1,21 +1,32 @@
 const express = require("express");
 const router = express.Router();
+
 const User = require("../models/User");
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// REGISTER
+
+// ================= REGISTER =================
 router.post("/register", async (req, res) => {
+
   try {
+
     const { name, email, password, role } = req.body;
 
+    // CHECK EXISTING USER
     const existing = await User.findOne({ email });
+
     if (existing) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({
+        message: "User already exists"
+      });
     }
 
+    // HASH PASSWORD
     const hashed = await bcrypt.hash(password, 10);
 
+    // CREATE USER
     await User.create({
       name,
       email,
@@ -23,45 +34,75 @@ router.post("/register", async (req, res) => {
       role
     });
 
-    res.json({ message: "User registered successfully" });
+    res.json({
+      message: "User registered successfully"
+    });
 
   } catch (err) {
-    res.status(500).json({ message: err.message });
+
+    res.status(500).json({
+      message: err.message
+    });
+
   }
+
 });
 
 
-// LOGIN
+// ================= LOGIN =================
 router.post("/login", async (req, res) => {
+
   try {
+
     const { email, password } = req.body;
 
+    // FIND USER
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({
+        message: "User not found"
+      });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    // CHECK PASSWORD
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Wrong password" });
+      return res.status(400).json({
+        message: "Wrong password"
+      });
     }
 
+    // GENERATE TOKEN
     const token = jwt.sign(
       {
         id: user._id,
         role: user.role
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      {
+        expiresIn: "1d"
+      }
     );
 
-    res.json({ token });
+    // SEND TOKEN + ROLE
+    res.json({
+      token,
+      role: user.role
+    });
 
   } catch (err) {
-    res.status(500).json({ message: err.message });
+
+    res.status(500).json({
+      message: err.message
+    });
+
   }
+
 });
 
 module.exports = router;

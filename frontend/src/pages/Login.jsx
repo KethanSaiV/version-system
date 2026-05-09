@@ -11,11 +11,12 @@ export default function Login() {
   const login = async () => {
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:5000/auth/login", {
+      const res = await axios.post("https://version-system.onrender.com/auth/login", {
         email,
         password,
       });
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
       nav("/dashboard");
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");

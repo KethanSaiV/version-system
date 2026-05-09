@@ -13,7 +13,7 @@ export default function Register() {
   const register = async () => {
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/auth/register", {
+      await axios.post("https://version-system.onrender.com/auth/register", {
         name,
         email,
         password,
